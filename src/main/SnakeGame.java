@@ -7,5 +7,4 @@ public class SnakeGame {
 		// shortcut for creating an instance of a class
 		new GameFrame();
 	}
-
 }
