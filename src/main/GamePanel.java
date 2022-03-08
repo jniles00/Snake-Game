@@ -63,22 +63,65 @@ public class GamePanel extends JPanel implements ActionListener{
 	
 	public void draw(Graphics graphics) {
 		
-		// creates a grid by drawing lines across the game panel
-		for(int i = 0; i < screenHeight / unitSize; i++) {
-			graphics.drawLine(i*unitSize, 0, i*unitSize, screenHeight);
-			graphics.drawLine(0,i*unitSize, screenWidth, i*unitSize);
+		if(running)
+			{
+			// creates a grid by drawing lines across the game panel
+			for(int i = 0; i < screenHeight / unitSize; i++) {
+				graphics.drawLine(i*unitSize, 0, i*unitSize, screenHeight);
+				graphics.drawLine(0,i*unitSize, screenWidth, i*unitSize);
+			}
+			
+			// sets the colour of the food
+			graphics.setColor(Color.white);
+			
+			// sets the size and position of the food 
+			graphics.fillRect(foodPosX, foodPosY, unitSize, unitSize);
+			
+			for(int i = 0; i < bodyParts; i++) {
+				// Checks to see if i is equal to the head of the snake (0)
+				if(i == 0) {
+					graphics.setColor(Color.green);
+					graphics.fillRect(bodySizeX[i], bodySizeY[i], unitSize, unitSize);
+				}
+				else {
+					// This will be the body of the snake
+					graphics.setColor(new Color(107,142,35));
+					graphics.fillRect(bodySizeX[i], bodySizeY[i], unitSize, unitSize);
+				}
+			}
 		}
-		
-		// sets the colour of the food
-		graphics.setColor(Color.white);
-		
-		// sets the size and position of the food 
-		graphics.fillRect(foodPosX, foodPosY, unitSize, unitSize);
-		
+		else {
+			gameOver(graphics);
+		}
 	}
 	
 	public void move() {
 		
+		// iterates through all the body parts of the snake
+		for(int i = bodyParts; i > 0; i--) {
+			// shifts all the coordinates of the array by one spot
+			bodySizeX[i] = bodySizeX[i-1];
+			bodySizeY[i] = bodySizeY[i-1];
+		}
+		
+		switch(snakeDirection) {
+		case 'U':
+			// array position 0 = head of the snake, moves it one unit size up
+			bodySizeY[0] = bodySizeY[0] - unitSize;
+			break;
+		case 'D':
+			// moves the head one position down
+			bodySizeY[0] = bodySizeY[0] + unitSize;
+			break;
+		case 'L':
+			// moves the head one position left
+			bodySizeX[0] = bodySizeX[0] - unitSize;
+			break;
+		case 'R':
+			// moves the head one position right
+			bodySizeX[0] = bodySizeX[0] + unitSize;
+			break;
+		}
 	}
 	
 	public void newFood() {
@@ -88,27 +131,101 @@ public class GamePanel extends JPanel implements ActionListener{
 	}
 	
 	public void checkFood() {
+		// checks to see if the head of the snake has collided with the food, 
+		if((bodySizeX[0] == foodPosX) && (bodySizeY[0] == foodPosY)) {
+			bodyParts++;				// increases the snake's size
+			foodEaten++;				// increases the score 
+			newFood();					// calls the new food function to spawn more food
+		}
 		
 	}
 	
 	public void checkCollisions() {
 		
+		for(int i = bodyParts; i > 0; i--) {
+			// checks to see if the head has collided with the body
+			if((bodySizeX[0] == bodySizeX[i]) && (bodySizeY[0] == bodySizeY[i])) {
+				// stops the game running
+				running = false;
+			}
+		}
+		
+		// checks if the head has collided with the left border
+		if(bodySizeX[0] < 0) {
+			running = false;
+		}
+		
+		// checks if the head has collided with the right border
+		if(bodySizeX[0] > screenWidth) {
+			running = false;
+		}
+		
+		// checks if the head has collided with the top border
+		if(bodySizeY[0] < 0) {
+			running = false;
+		}
+		
+		// checks if the head has collided with the bottom border
+		if(bodySizeY[0] > screenHeight) {
+			running = false;
+		}
+		
+		// stops timer if the game is not running
+		if(!running) {
+			timer.stop();
+		}
+		
 	}
 	
 	public void gameOver(Graphics graphics) {
 		
+		// Game Over text
+		graphics.setColor(new Color (178,34,34));
+		graphics.setFont(new Font("Ink Free", Font.BOLD, 100));
+		// prints the string "Game Over" and sets it to be displayed in the middle of the screen
+		FontMetrics fontMetrics = getFontMetrics(graphics.getFont());
+		graphics.drawString("Game Over", (screenWidth - fontMetrics.stringWidth("Game Over")) / 2, screenHeight / 2);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		// Checks if the game is running
+		if(running ) {
+			// checks if the snake has run into some food, followed by the collisions
+			move();
+			checkFood();
+			checkCollisions();
+		}
+		repaint();
 	}
 	
 	public class MyKeyAdapter extends KeyAdapter{
 		@Override
 		public void keyPressed(KeyEvent e){
 			
+			switch(e.getKeyCode()) {
+			case KeyEvent.VK_LEFT:
+				// this check is in place to stop the player from doing 180 turns
+				if(snakeDirection != 'R') {
+					snakeDirection = 'L';
+				}
+				break;
+			case KeyEvent.VK_RIGHT:
+				if(snakeDirection != 'L') {
+					snakeDirection = 'R';
+				}
+				break;
+			case KeyEvent.VK_UP:
+				if(snakeDirection != 'D') {
+					snakeDirection = 'U';
+				}
+				break;
+			case KeyEvent.VK_DOWN:
+				if(snakeDirection != 'U') {
+					snakeDirection = 'D';
+				}
+				break;
+			}
 		}
 	}
 }
