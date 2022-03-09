@@ -72,8 +72,9 @@ public class GamePanel extends JPanel implements ActionListener{
 				graphics.drawLine(0,i*unitSize, screenWidth, i*unitSize);
 			}
 			*/
+			
 			// sets the colour of the food
-			graphics.setColor(Color.white);
+			graphics.setColor(Color.red);
 			
 			// sets the size and position of the food 
 			graphics.fillRect(foodPosX, foodPosY, unitSize, unitSize);
@@ -85,11 +86,15 @@ public class GamePanel extends JPanel implements ActionListener{
 					graphics.setColor(Color.green);
 					graphics.fillRect(bodySizeX[i], bodySizeY[i], unitSize, unitSize);
 				}
+				else if(foodEaten > 50) {
+					// if food eaten is greater than 50 then it will change the colour of the snake
+					// rainbow snake
+					graphics.setColor(new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)));
+					graphics.fillRect(bodySizeX[i], bodySizeY[i], unitSize, unitSize);
+				}
 				else {
 					// This will be the body of the snake
 					graphics.setColor(new Color(107,142,35));
-					// rainbow snake
-//					graphics.setColor(new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)));
 					graphics.fillRect(bodySizeX[i], bodySizeY[i], unitSize, unitSize);
 				}
 			}
@@ -103,10 +108,10 @@ public class GamePanel extends JPanel implements ActionListener{
 	
 	public void Score(Graphics graphics) {
 		// Score text
-					graphics.setColor(Color.white);
-					graphics.setFont(new Font("Ink Free", Font.BOLD, 40));
-					FontMetrics fontMetrics = getFontMetrics(graphics.getFont());
-					graphics.drawString("Score:" + foodEaten, 
+		graphics.setColor(Color.white);
+		graphics.setFont(new Font("Ink Free", Font.BOLD, 40));
+		FontMetrics fontMetrics = getFontMetrics(graphics.getFont());
+		graphics.drawString("Score:" + foodEaten, 
 							(screenWidth - fontMetrics.stringWidth("Score:" + foodEaten)) / 2, graphics.getFont().getSize());
 	}
 	public void move() {
@@ -151,7 +156,6 @@ public class GamePanel extends JPanel implements ActionListener{
 			foodEaten++;				// increases the score 
 			newFood();					// calls the new food function to spawn more food
 		}
-		
 	}
 	
 	public void checkCollisions() {
@@ -188,7 +192,6 @@ public class GamePanel extends JPanel implements ActionListener{
 		if(!running) {
 			timer.stop();
 		}
-		
 	}
 	
 	public void gameOver(Graphics graphics) {
@@ -201,6 +204,8 @@ public class GamePanel extends JPanel implements ActionListener{
 		graphics.drawString("Game Over", (screenWidth - fontMetrics.stringWidth("Game Over")) / 2, screenHeight / 2);
 		
 		Score(graphics);
+		
+		// Add function to let player choose to restart or exit
 	}
 	
 	@Override
@@ -242,6 +247,22 @@ public class GamePanel extends JPanel implements ActionListener{
 				}
 				break;
 			}
+		}
+		
+		public void gameOverMenu(KeyEvent e) {
+			
+			// code for game over menu
+			do {
+				switch(e.getKeyCode()) {
+				case KeyEvent.VK_ENTER:
+					Re
+					break;
+				case KeyEvent.VK_RIGHT:
+					if(snakeDirection != 'L') {
+						snakeDirection = 'R';
+					}
+				}
+			}while(null)
 		}
 	}
 }
