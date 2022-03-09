@@ -65,18 +65,20 @@ public class GamePanel extends JPanel implements ActionListener{
 		
 		if(running)
 			{
+			/*
 			// creates a grid by drawing lines across the game panel
 			for(int i = 0; i < screenHeight / unitSize; i++) {
 				graphics.drawLine(i*unitSize, 0, i*unitSize, screenHeight);
 				graphics.drawLine(0,i*unitSize, screenWidth, i*unitSize);
 			}
-			
+			*/
 			// sets the colour of the food
 			graphics.setColor(Color.white);
 			
 			// sets the size and position of the food 
 			graphics.fillRect(foodPosX, foodPosY, unitSize, unitSize);
 			
+			// Draws the body parts of the snake
 			for(int i = 0; i < bodyParts; i++) {
 				// Checks to see if i is equal to the head of the snake (0)
 				if(i == 0) {
@@ -86,15 +88,27 @@ public class GamePanel extends JPanel implements ActionListener{
 				else {
 					// This will be the body of the snake
 					graphics.setColor(new Color(107,142,35));
+					// rainbow snake
+//					graphics.setColor(new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)));
 					graphics.fillRect(bodySizeX[i], bodySizeY[i], unitSize, unitSize);
 				}
 			}
+			
+			Score(graphics);		
 		}
 		else {
 			gameOver(graphics);
 		}
 	}
 	
+	public void Score(Graphics graphics) {
+		// Score text
+					graphics.setColor(Color.white);
+					graphics.setFont(new Font("Ink Free", Font.BOLD, 40));
+					FontMetrics fontMetrics = getFontMetrics(graphics.getFont());
+					graphics.drawString("Score:" + foodEaten, 
+							(screenWidth - fontMetrics.stringWidth("Score:" + foodEaten)) / 2, graphics.getFont().getSize());
+	}
 	public void move() {
 		
 		// iterates through all the body parts of the snake
@@ -185,6 +199,8 @@ public class GamePanel extends JPanel implements ActionListener{
 		// prints the string "Game Over" and sets it to be displayed in the middle of the screen
 		FontMetrics fontMetrics = getFontMetrics(graphics.getFont());
 		graphics.drawString("Game Over", (screenWidth - fontMetrics.stringWidth("Game Over")) / 2, screenHeight / 2);
+		
+		Score(graphics);
 	}
 	
 	@Override
